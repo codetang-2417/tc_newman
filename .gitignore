@@ -1,7 +1,12 @@
 qemu-7.0.0/GNUmakefile
 qemu-7.0.0/build/*
-qemu-7.0.0/meason*
+qemu-7.0.0/meson/*
 qemu-7.0.0/dtc/*
+qemu-7.0.0/.git_bak
+qemu-7.0.0/tests/fp/berkeley-softfloat-3/
+qemu-7.0.0/tests/fp/berkeley-testfloat-3/
+qemu-7.0.0/ui/keycodemapdb/
+qemu-7.0.0/slirp/
 *.pyc
 .sdk
 .stgit-*
@@ -19,3 +24,4 @@ GTAGS
 *.patch
 *.gcov
 /output/*
+

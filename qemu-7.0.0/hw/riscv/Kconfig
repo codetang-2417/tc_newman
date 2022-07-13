@@ -51,6 +51,10 @@ config RISCV_VIRT
     select FW_CFG_DMA
     select PLATFORM_BUS
 
+config TC_NEWMAN
+    bool
+    select SERIAL
+
 config SIFIVE_E
     bool
     select MSI_NONBROKEN

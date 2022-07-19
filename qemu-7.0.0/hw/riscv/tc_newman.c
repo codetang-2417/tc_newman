@@ -38,7 +38,7 @@
 #include "sysemu/device_tree.h"
 #include "sysemu/sysemu.h"
 
-
+//定义内存空间
 static const MemMapEntry virt_memmap[] = {
     [TC_NEWMAN_MROM]    = {        0x0,      0x8000 },
     [TC_NEWMAN_SRAM]    = {     0x8000,      0x8000 },
@@ -46,6 +46,7 @@ static const MemMapEntry virt_memmap[] = {
     [TC_NEWMAN_DRAM]    = { 0x80000000,         0x0 },
 };
 
+//risc-v启动代码,根据文件 hw/riscv/boot.c中的代码而来。去掉了fdt，FDT：Flattened Device Tree即扁平设备树。hart指的是(hardware thread 硬件线程)
 static void tc_newman_setup_rom_reset_vec(MachineState *machine, RISCVHartArrayState *harts,
                                hwaddr start_addr,
                                hwaddr rom_base, hwaddr rom_size,
@@ -96,16 +97,18 @@ static void tc_newman_machine_init(MachineState *machine)
     MemoryRegion *system_memory = get_system_memory();
     MemoryRegion *main_mem = g_new(MemoryRegion, 1);
     MemoryRegion *sram_mem = g_new(MemoryRegion, 1);
-    MemoryRegion *mask_rom = g_new(MemoryRegion, 1);
+    MemoryRegion *mask_rom = g_new(MemoryRegion, 1);//开辟空间
     int i, base_hartid, hart_count;
     char *soc_name;
 
+    //检查CPU插槽是否超过定义的最大数
     if (TC_NEWMAN_SOCKETS_MAX < riscv_socket_count(machine)) {
         error_report("number of sockets/nodes should be less than %d",
             TC_NEWMAN_SOCKETS_MAX);
         exit(1);
     }
 
+    //
     for (i = 0; i < riscv_socket_count(machine); i++) {
         if (!riscv_socket_check_hartids(machine, i)) {
             error_report("discontinuous hartids in socket%d", i);
@@ -137,16 +140,19 @@ static void tc_newman_machine_init(MachineState *machine)
         sysbus_realize(SYS_BUS_DEVICE(&s->soc[i]), &error_abort);
     }
 
+    /*register system main memory (actual RAM)*/
     memory_region_init_ram(main_mem, NULL, "riscv_tc_newman_board.dram",
                            machine->ram_size, &error_fatal);
     memory_region_add_subregion(system_memory, memmap[TC_NEWMAN_DRAM].base,
-        main_mem);
+        main_mem);//用于注册到系统memory中
 
+    
     memory_region_init_ram(sram_mem, NULL, "riscv_tc_newman_board.sram",
                            memmap[TC_NEWMAN_SRAM].size, &error_fatal);
     memory_region_add_subregion(system_memory, memmap[TC_NEWMAN_SRAM].base,
         sram_mem);
 
+    /* boot rom */
     memory_region_init_rom(mask_rom, NULL, "riscv_tc_newman_board.mrom",
                            memmap[TC_NEWMAN_MROM].size, &error_fatal);
     memory_region_add_subregion(system_memory, memmap[TC_NEWMAN_MROM].base,
@@ -161,12 +167,12 @@ static void tc_newman_machine_init(MachineState *machine)
 static void tc_newman_machine_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);//QOM中使用宏对对象类型进行转换,MACHINE使用的是隐式转换函数OBJECT_DECLARE_TYPE，所以直接找这个定义是找不到的
-    mc->desc = "RISC-V Tc newman board";//设备名称
-    mc->init = tc_newman_machine_init;  //对象初始化？
+    mc->desc = "RISC-V Tc newman board";//设备描述
+    mc->init = tc_newman_machine_init;  //虚函数的实现
     mc->max_cpus = TC_NEWMAN_CPUS_MAX;
     mc->default_cpu_type = TYPE_RISCV_CPU_BASE;//宏定义的CPU名称
     mc->pci_allow_0_address = true;
-    mc->possible_cpu_arch_ids = riscv_numa_possible_cpu_arch_ids;//不明确具体的含义，但其他RISC-V厂商实现都依赖numa这类函数
+    mc->possible_cpu_arch_ids = riscv_numa_possible_cpu_arch_ids;//NUMA nodes：一个Sockets可以划分为多个NUMA node。Numa使用node来管理CPU和内存。，但其他RISC-V厂商实现都依赖numa这类函数
     mc->cpu_index_to_instance_props = riscv_numa_cpu_index_to_props;//同上
     mc->get_default_cpu_node_id = riscv_numa_get_default_cpu_node_id;//同上
     mc->numa_mem_supported = true;//
@@ -190,4 +196,4 @@ static void tc_newman_machine_init_register_types(void)
     type_register_static(&tc_newman_machine_typeinfo);//宏处理的类注册函数
 }
 
-type_init(tc_newman_machine_init_register_types)//宏处理，在执行main之前就预先将类加载好
+type_init(tc_newman_machine_init_register_types)//宏处理，在执行main之前就预先将类加载好，可以视作初始化

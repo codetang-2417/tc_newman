@@ -6,7 +6,7 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "sh config.sh",
+            "command": "mv ./qemu-7.0.0/.git_bak ./qemu-7.0.0/.git;sh config.sh;mv ./qemu-7.0.0/.git ./qemu-7.0.0/.git_bak",
         }
     ]
 }

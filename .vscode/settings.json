@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "sysemu.h": "c",
+        "tc_newman.h": "c",
+        "arch_init.h": "c",
+        "device_tree.h": "c",
+        "virt.h": "c"
+    }
+}

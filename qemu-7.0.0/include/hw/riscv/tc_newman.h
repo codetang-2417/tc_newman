@@ -24,7 +24,7 @@
 #include "qom/object.h"
 
 #define TC_NEWMAN_CPUS_MAX 8
-#define TC_NEWMAN_SOCKETS_MAX 8
+#define TC_NEWMAN_SOCKETS_MAX 2
 
 #define TYPE_RISCV_TC_NEWMAN_MACHINE MACHINE_TYPE_NAME("tc-newman")//利用宏生成一个字符串作为类对象的名字，看做是type名，代表将要注册的类对象。这是QOM的定义格式
 typedef struct TCNEWMANState TCNEWMANState;//前置声明
@@ -39,7 +39,7 @@ struct TCNEWMANState {
     RISCVHartArrayState soc[TC_NEWMAN_SOCKETS_MAX];//通过实例化对象，产生实际的对象数组，作为CPU
 };
 
-//暂不清楚这么写的定义
+//枚举类型，便于代码阅读，定义内存空间时使用
 enum {
     TC_NEWMAN_MROM,
     TC_NEWMAN_SRAM,

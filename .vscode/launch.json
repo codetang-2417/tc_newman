@@ -12,7 +12,7 @@
             "program": "${workspaceRoot}/output/qemu/bin/qemu-system-riscv64",
             "args": [
                 "-M",
-                "virt",
+                "tc-newman",
                 "-m",
                 "1G",
                 "-smp",
@@ -23,7 +23,8 @@
 
             ],
             "stopAtEntry": false,
-            "externalConsole": true,
+            "externalConsole": false,
+            "preLaunchTask": "build",
             "cwd": "${workspaceRoot}",
             "MIMode": "gdb",
             "setupCommands": [

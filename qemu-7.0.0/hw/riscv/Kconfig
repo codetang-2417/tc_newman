@@ -54,6 +54,9 @@ config RISCV_VIRT
 config TC_NEWMAN
     bool
     select SERIAL
+    select SIFIVE_PLIC
+    select RISCV_ACLINT
+    select PFLASH_CFI01
 
 config SIFIVE_E
     bool

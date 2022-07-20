@@ -4,6 +4,10 @@
         "tc_newman.h": "c",
         "arch_init.h": "c",
         "device_tree.h": "c",
-        "virt.h": "c"
+        "virt.h": "c",
+        "sifive_plic.h": "c",
+        "boot.h": "c",
+        "flash.h": "c",
+        "riscv_aclint.h": "c"
     }
 }
